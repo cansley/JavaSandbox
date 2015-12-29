@@ -1,9 +1,10 @@
 package com.example.helloworld;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
@@ -136,4 +137,74 @@ public class HelloWorld {
 
         return String.join(" - ", counts);
     }
+
+    public static String Decode(String morseCode){
+        List<String> decodedWords = Arrays.asList(morseCode.split("   ")).stream().map(w->decodeWord(w)).collect(Collectors.toList());
+        return String.join(" ", decodedWords);
+    }
+
+    private static String decodeWord(String word){
+        List<String> out = Arrays.asList(word.split(" ")).stream().map(l->MorseCode.get(l)).collect(Collectors.toList());
+        return String.join("", out);
+    }
+
+    public static String CleanBits(String bits){
+        return bits.substring(bits.indexOf("1", 0), bits.lastIndexOf("1")+1);
+    }
+
+    /*
+        Calulates the time interval size give the following rules
+        sub pause : character pause : word pause is
+        1 : 3 : 7
+        For the input string group by zeroes, get min mid max, figure out how many units is a time unit.
+     */
+    public static int CalculateTimeInterval(String bits) throws Exception {
+        String[] digits = CleanBits(bits).split("");
+        TreeSet<Integer> spaceSizes = new TreeSet<>();
+        int findCount = 0;
+        String lastDigit = "";
+        for(int x=0;x<digits.length;x++){
+            if(digits[x].equals("0") && lastDigit.equals("1")){
+                findCount = 1;
+            }
+
+            if (digits[x].equals("0") && lastDigit.equals("0")){
+                findCount++;
+            }
+            if(digits[x].equals("1") && lastDigit.equals("0")){
+                if(!spaceSizes.contains(findCount))
+                {
+                    spaceSizes.add(findCount);
+                }
+                findCount = 0;
+            }
+
+            lastDigit = digits[x];
+        }
+
+        Integer[] sortedSet = new Integer[spaceSizes.size()];
+        spaceSizes.toArray(sortedSet);
+        int retVal = -1;
+        switch (sortedSet.length){
+            case 3:
+                retVal= sortedSet[0];
+                break;
+            case 2:
+                float ratio = (float)sortedSet[1]/sortedSet[0];
+                if(ratio == 3.0) {
+                    retVal= sortedSet[0];
+                } else if(ratio == 2.5){
+                    retVal= (int)(sortedSet[0]/3);
+                }else{
+                    throw new Exception("Invalid data.");
+                }
+                break;
+            default:
+                throw new Exception("Not enough information to calculate");
+        }
+
+        return retVal;
+    }
 }
+
+

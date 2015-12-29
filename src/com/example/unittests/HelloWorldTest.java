@@ -66,22 +66,6 @@ public class HelloWorldTest {
 
     @Test
     public void testeqSumPowDig(){
-        long startTime;
-        long endTime;
-        long duration = 0;
-
-        int maxValue = 313500;
-        while(duration < 10000){
-            maxValue += 1000;
-            startTime = System.currentTimeMillis();
-            HelloWorld.eqSumPowDig(maxValue, 3);
-            endTime = System.currentTimeMillis();
-            duration = (endTime - startTime);
-            System.out.println(String.format("%d  took %d milliseconds.", maxValue, duration));
-        }
-
-        System.out.println(String.format("%d took longer than 10seconds."));
-
         assertEquals("[]", Arrays.toString(HelloWorld.eqSumPowDig(100, 2)));
         assertEquals("[153]", Arrays.toString(HelloWorld.eqSumPowDig(200, 3)));
         assertEquals("[153, 370]", Arrays.toString(HelloWorld.eqSumPowDig(370, 3)));
@@ -133,5 +117,25 @@ public class HelloWorldTest {
         assertEquals("dd", HelloWorld.getMiddle("middle"));
         assertEquals("t", HelloWorld.getMiddle("testing"));
         assertEquals("A", HelloWorld.getMiddle("A"));
+    }
+
+    @Test
+    public void testMorseCodeDecoder(){
+        assertEquals("AAA AAAA", HelloWorld.Decode(".... . -.--   .--- ..- -.. ."));
+        assertEquals("", HelloWorld.Decode("   ."));
+    }
+
+    @Test
+    public void testBitCleaner(){
+        assertEquals("110011011", HelloWorld.CleanBits("0110011011000"));
+        assertEquals("110011011", HelloWorld.CleanBits("110011011000"));
+        assertEquals("110011011", HelloWorld.CleanBits("0110011011"));
+        assertEquals("110011011", HelloWorld.CleanBits("110011011"));
+    }
+
+    @Test
+    public void testCalcTimeInterval() throws Exception{
+        String bits = "1100110011001100000011000000111111001100111111001111110000000000000011001111110011111100111111000000110011001111110000001111110011001100000011";
+        assertEquals(2, HelloWorld.CalculateTimeInterval(bits));
     }
 }
