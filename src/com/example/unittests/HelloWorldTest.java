@@ -4,6 +4,7 @@ import com.example.helloworld.HelloWorld;
 import com.sun.javafx.binding.BindingHelperObserver;
 import com.sun.javafx.runtime.SystemProperties;
 import org.junit.Test;
+import org.junit.Assert;
 import org.junit.rules.Stopwatch;
 
 import java.util.ArrayList;
@@ -134,8 +135,31 @@ public class HelloWorldTest {
     }
 
     @Test
-    public void testCalcTimeInterval() throws Exception{
+    public void testCalcTimeInterval(){
         String bits = "1100110011001100000011000000111111001100111111001111110000000000000011001111110011111100111111000000110011001111110000001111110011001100000011";
         assertEquals(2, HelloWorld.CalculateTimeInterval(bits));
+    }
+
+    @Test
+    public void testDecodeBits(){
+        String bits = "1100110011001100000011000000111111001100111111001111110000000000000011001111110011111100111111000000110011001111110000001111110011001100000011";
+        assertEquals(".... . -.--   .--- ..- -.. .", HelloWorld.decodeBits(bits));
+        assertEquals(". .", HelloWorld.decodeBits("10001"));
+        assertEquals(". .", HelloWorld.decodeBits("111000000000111"));
+        assertEquals("..", HelloWorld.decodeBits("111000111"));
+    }
+
+    @Test
+    public void testDigPow(){
+        assertEquals(1L, HelloWorld.digPow(89, 1));
+        assertEquals(-1L, HelloWorld.digPow(92, 1));
+        assertEquals(2L, HelloWorld.digPow(695, 2));
+        assertEquals(51L, HelloWorld.digPow(46288, 3));
+    }
+
+    @Test
+    public void testRace(){
+        Assert.assertArrayEquals(new int[]{0,32,18}, HelloWorld.Race(720, 850, 70));
+        Assert.assertArrayEquals(new int[]{3,21,49}, HelloWorld.Race(80, 91, 37));
     }
 }

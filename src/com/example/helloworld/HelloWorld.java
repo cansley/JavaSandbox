@@ -1,6 +1,7 @@
 package com.example.helloworld;
 
 import java.math.BigDecimal;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
@@ -13,7 +14,7 @@ import java.util.stream.LongStream;
  */
 public class HelloWorld {
     public static void main(String[] args) {
-        System.out.println("Hello, World!");
+        System.out.println(String.format("Hello, World!"));
 
         for(int x=1;x<10;x++){
             System.out.println(String.format("%d: %d - %d", x, (int)Math.pow(x, 3), CalculateHiddenCubes(x)));
@@ -149,7 +150,8 @@ public class HelloWorld {
     }
 
     public static String CleanBits(String bits){
-        return bits.substring(bits.indexOf("1", 0), bits.lastIndexOf("1")+1);
+        //return bits.substring(bits.indexOf("1", 0), bits.lastIndexOf("1")+1);
+        return bits.replaceAll("^0+|0+$", "");
     }
 
     /*
@@ -158,28 +160,37 @@ public class HelloWorld {
         1 : 3 : 7
         For the input string group by zeroes, get min mid max, figure out how many units is a time unit.
      */
-    public static int CalculateTimeInterval(String bits) throws Exception {
+    public static int CalculateTimeInterval(String bits) {
+
+        // Old code, left for reference...
+        /*
         String[] digits = CleanBits(bits).split("");
         TreeSet<Integer> spaceSizes = new TreeSet<>();
         int findCount = 0;
         String lastDigit = "";
+        int firstSetOnesCount = 0;
+        boolean foundFirstZero = false;
         for(int x=0;x<digits.length;x++){
             if(digits[x].equals("0") && lastDigit.equals("1")){
                 findCount = 1;
-            }
-
-            if (digits[x].equals("0") && lastDigit.equals("0")){
+                foundFirstZero = true;
+            } else if (digits[x].equals("0") && lastDigit.equals("0")){
                 findCount++;
-            }
-            if(digits[x].equals("1") && lastDigit.equals("0")){
+            } else if(digits[x].equals("1") && lastDigit.equals("0")){
                 if(!spaceSizes.contains(findCount))
                 {
                     spaceSizes.add(findCount);
                 }
                 findCount = 0;
+            } else if(!foundFirstZero && digits[x].equals("1")) {
+                firstSetOnesCount++;
             }
 
             lastDigit = digits[x];
+        }
+        if(findCount > 0 && !spaceSizes.contains(findCount))
+        {
+            spaceSizes.add(findCount);
         }
 
         Integer[] sortedSet = new Integer[spaceSizes.size()];
@@ -196,13 +207,74 @@ public class HelloWorld {
                 } else if(ratio == 2.5){
                     retVal= (int)(sortedSet[0]/3);
                 }else{
-                    throw new Exception("Invalid data.");
+                    retVal = -1;
                 }
                 break;
+            case 1:
+                if(sortedSet[0]/firstSetOnesCount == 1){
+                    retVal = firstSetOnesCount;
+                } else if(sortedSet[0]/3 == 1){
+                    retVal = 1;
+                } else if (sortedSet[0] / firstSetOnesCount == 2.5){
+                    retVal = firstSetOnesCount;
+                } else if (sortedSet[0] / firstSetOnesCount == 3) {
+                    retVal = firstSetOnesCount;
+                } else
+                {
+                    retVal = sortedSet[0];
+                }
+                break;
+            case 0:
+                retVal = bits.length();
+                break;
             default:
-                throw new Exception("Not enough information to calculate");
+                retVal = -1;
+        }
+        */
+        bits = CleanBits(bits); // just in case...
+        int retVal = Integer.MAX_VALUE;
+        Matcher matcher = Pattern.compile("1+|0+").matcher(bits);
+        while(matcher.find()){
+            retVal = Math.min(retVal, matcher.group().length());
+        }
+        return retVal;
+    }
+
+    public static String decodeBits(String bits){
+        bits = CleanBits(bits);
+        int timeInterval = CalculateTimeInterval(bits);
+        bits = bits.replaceAll("0{" + timeInterval * 7 + "}", "   ");
+        bits = bits.replaceAll("0{" + timeInterval * 3 + "}", " ");
+        bits = bits.replaceAll("1{" + timeInterval * 3 + "}0?", "-");
+        bits = bits.replaceAll("1{" + timeInterval + "}0?", ".");
+        bits = bits.replaceAll("0", "");
+
+        return bits;
+    }
+
+    public static long digPow(int n, int p){
+        String val = String.valueOf(n);
+        int runningTot = 0;
+        for(int x=0;x<val.length();x++){
+            runningTot += Math.pow(Integer.decode(val.substring(x, x+1)),(p+x));
         }
 
+        int result = runningTot / n;
+        if(result * n == runningTot) return result;
+
+        return (runningTot % n == 0) ? runningTot / n : -1L;
+    }
+
+    public static int[] Race(int v1, int v2, int g){
+        if (v1 > v2) return null;
+
+        long seconds = (long)Math.floor((double)g/(v2-v1)*3600);
+
+        int[] retVal = new int[3];
+        LocalTime tim = LocalTime.ofSecondOfDay(seconds);
+        retVal[0] = tim.getHour();
+        retVal[1] = tim.getMinute();
+        retVal[2] = tim.getSecond();
         return retVal;
     }
 }
