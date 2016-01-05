@@ -7,6 +7,7 @@ import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 
 /**
@@ -140,13 +141,16 @@ public class HelloWorld {
     }
 
     public static String Decode(String morseCode){
-        List<String> decodedWords = Arrays.asList(morseCode.split("   ")).stream().map(w->decodeWord(w)).collect(Collectors.toList());
-        return String.join(" ", decodedWords);
+        return String.join(" ", Arrays.asList(morseCode.split("   ")).stream().map(w->decodeWord(w)).filter(w-> w.length() > 0).collect(Collectors.toList()));
     }
 
     private static String decodeWord(String word){
-        List<String> out = Arrays.asList(word.split(" ")).stream().map(l->MorseCode.get(l)).collect(Collectors.toList());
-        return String.join("", out);
+        return (word.length() == 0) ? "" :String.join("", Arrays.asList(word.split(" ")).stream().map(l->CheckNull(MorseCode.get(l))).collect(Collectors.toList()));
+    }
+
+    private static String CheckNull(String value){
+        if(value == null) return "";
+        return value;
     }
 
     public static String CleanBits(String bits){
@@ -277,6 +281,28 @@ public class HelloWorld {
         retVal[2] = tim.getSecond();
         return retVal;
     }
+
+    // where n = number of people in circle, k = target interval.
+    public static int josephusSurvivor(final int n, final int k){
+        if (n>0) {
+            return (josephusSurvivor(n - 1, k) + k-1) % n + 1;
+        } else{
+            return 0;
+        }
+    }
+
+    public static int josephusSurvivor2(final int n, final int k){
+        int[] val = josephusSurvivor(new int[n], k, 1);
+        return val[0];
+    }
+
+    private static int[] josephusSurvivor(final int[]n, final int k, final int s){
+        if(n.length == 1) return n;
+        int idx = k % n.length+s;
+        return josephusSurvivor(n, k, idx+1);
+    }
+
+
 }
 
 
