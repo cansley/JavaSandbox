@@ -78,7 +78,7 @@ public class HelloWorldTest {
     public void testReverse(){
         char[] source = {'a', 'b'};
         char[] result = {'b', 'a'};
-        assertEquals(result, HelloWorld.Reverse(source));
+        assertArrayEquals(result, HelloWorld.Reverse(source));
     }
 
     @Test
@@ -123,7 +123,7 @@ public class HelloWorldTest {
     @Test
     public void testMorseCodeDecoder(){
         assertEquals("AAA AAAA", HelloWorld.Decode(".... . -.--   .--- ..- -.. ."));
-        assertEquals("", HelloWorld.Decode("   ."));
+        assertEquals("A", HelloWorld.Decode("   ."));
     }
 
     @Test
@@ -161,5 +161,14 @@ public class HelloWorldTest {
     public void testRace(){
         Assert.assertArrayEquals(new int[]{0,32,18}, HelloWorld.Race(720, 850, 70));
         Assert.assertArrayEquals(new int[]{3,21,49}, HelloWorld.Race(80, 91, 37));
+    }
+
+    @Test
+    public void testJosephusSurvivor(){
+        assertEquals(4, HelloWorld.josephusSurvivor(7, 3));
+        assertEquals(10, HelloWorld.josephusSurvivor(11, 19));
+        assertEquals(28, HelloWorld.josephusSurvivor(40, 3));
+        assertEquals(13, HelloWorld.josephusSurvivor(14, 2));
+        assertEquals(100, HelloWorld.josephusSurvivor(100,1));
     }
 }
