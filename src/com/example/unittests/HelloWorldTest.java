@@ -5,10 +5,13 @@ import com.sun.javafx.binding.BindingHelperObserver;
 import com.sun.javafx.runtime.SystemProperties;
 import org.junit.Test;
 import org.junit.Assert;
+import org.hamcrest.core.*;
+import org.hamcrest.CoreMatchers.*;
 import org.junit.rules.Stopwatch;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -170,5 +173,27 @@ public class HelloWorldTest {
         assertEquals(28, HelloWorld.josephusSurvivor(40, 3));
         assertEquals(13, HelloWorld.josephusSurvivor(14, 2));
         assertEquals(100, HelloWorld.josephusSurvivor(100,1));
+    }
+
+    @Test
+    public void testJosephusSurvivor2(){
+        assertEquals(Arrays.asList(3,6,2,7,5,1,4), HelloWorld.josephusSurvivor(new ArrayList<Object>(Arrays.asList(1,2,3,4,5,6,7)), 3));
+        assertEquals(Arrays.asList(true, true, true, false, false, true, false, true, false), HelloWorld.josephusSurvivor(new ArrayList<Object>(Arrays.asList(true, false, true, false, true, false, true, false, true)), 9));
+        assertEquals(Arrays.asList(115, 124, 154, 157, 102, 139, 173, 187, 14, 30, 189, 162, 5, 0, 189, 138, 100, 102, 129), HelloWorld.josephusSurvivor(new ArrayList<Object>(Arrays.asList(30, 154, 102, 129, 189, 189, 124, 138, 100, 173, 139, 187, 115, 102, 5, 14, 157, 0, 162)), 13));
+    }
+
+    @Test
+    public void testGetAllPrimeFactors(){
+        assertArrayEquals(new Long[]{2l,2l,5l,5l}, HelloWorld.getAllPrimeFactors(100));
+    }
+
+    @Test
+    public void testGetUniquePrimeFactorsWithCount(){
+        assertArrayEquals(new Long[][]{{2l,5l},{2l,2l}}, HelloWorld.getUniquePrimeFactorsWithCount(100));
+    }
+
+    @Test
+    public void testGetPrimeFactorPotencies(){
+        assertArrayEquals(new Long[]{4l,25l}, HelloWorld.getPrimeFactorPotencies(100));
     }
 }

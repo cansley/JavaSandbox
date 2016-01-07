@@ -284,25 +284,96 @@ public class HelloWorld {
 
     // where n = number of people in circle, k = target interval.
     public static int josephusSurvivor(final int n, final int k){
-        if (n>0) {
-            return (josephusSurvivor(n - 1, k) + k-1) % n + 1;
-        } else{
-            return 0;
+        return (n>0) ? (josephusSurvivor(n - 1, k) + k-1) % n + 1 : 0;
+    }
+
+    public static <T> List<T> josephusSurvivor(final List<T> items, final int k){
+        List<T> permutation = new ArrayList<>();
+        int position = 0;
+        while(items.size()>0){
+            position = (position + k -1) % items.size();
+            permutation.add(items.remove(position));
         }
+        return permutation;
     }
 
-    public static int josephusSurvivor2(final int n, final int k){
-        int[] val = josephusSurvivor(new int[n], k, 1);
-        return val[0];
+    // leaving this one for posterity
+    private static <T> List<T> josephusSurvivor(final List<T> n, final int k, final int s){
+        if(n.size() == 1) return n;
+        int idx = (k+s-2 < n.size()) ? k+s-2 : (k+s-2) % n.size();
+        idx = (idx == n.size()) ? 0: idx;
+        List<T> res = new ArrayList<>();
+        List<T> newList = new ArrayList<>(n);
+        res.add(n.get(idx));
+        newList.remove(idx);
+        res.addAll(josephusSurvivor(newList, k, (idx+1 == n.size()) ? 1 : idx+1));
+        return res;
     }
 
-    private static int[] josephusSurvivor(final int[]n, final int k, final int s){
-        if(n.length == 1) return n;
-        int idx = k % n.length+s;
-        return josephusSurvivor(n, k, idx+1);
+    private static int[] combineArrays(final int[]a, final int[]b){
+        int[] retVal = new int[a.length+b.length];
+        System.arraycopy(a, 0, retVal, 0, a.length);
+        System.arraycopy(b, 0, retVal, a.length, b.length);
+        return retVal;
     }
 
+    /**
+     Return value: List of all prime factors of a given number n
+     */
+    public static Long[] getAllPrimeFactors(long n) {
+        if (n==0) return new Long[] {};
+        if(n==1) return new Long[] {1l};
+        List<Long> factors = new ArrayList<>();
+        for(long i=2;i<=n;i++){
+            while (n % i == 0){
+                factors.add(i);
+                n /= i;
+            }
+        }
+        Long[] retVal = new Long[factors.size()];
+        factors.toArray(retVal);
+        return retVal;
+    }
 
+    /**
+     Return value: List containing two lists, first containg all prime factors without duplicates,
+     second containing the count, how often each prime factor occured.
+     Return code always contains two lists.
+
+     e.g.: getUniquePrimeFactorsWithCount(100) = {{2,5},{2,2}) // prime 2 occurs 2 times, prime 2 occurs 5 times,
+     */
+    public static Long[][] getUniquePrimeFactorsWithCount(long n) {
+        if(n == 0) return new Long[][] {{},{}};
+        if(n == 1) return new Long[][] {{1l},{1l}};
+        Long[] factors = getAllPrimeFactors(n);
+        LinkedHashMap<Long, Long> mitCounts = new LinkedHashMap<>();
+        for(int x=0;x<factors.length;x++){
+            if(mitCounts.containsKey(factors[x])){
+                mitCounts.put(factors[x], mitCounts.get(factors[x])+1l);
+            } else {
+                mitCounts.put(factors[x], 1l);
+            }
+        }
+
+        return new Long[][]{mitCounts.keySet().toArray(new Long[mitCounts.size()]),
+                mitCounts.values().toArray(new Long[mitCounts.size()])};
+    }
+    /**
+     Return value: List containing product of same prime factors,
+     e.g.: 45 = 3*3*5 ==>  {3^2,5^1} == {9,5}
+     e.g.: getUniquePrimeFactorsWithCount(100) = {{2,5},{2,2}) // prime 2 occurs 2 times, prime 2 occurs 5 times,
+     */
+    public static Long[] getPrimeFactorPotencies(long n) {
+        if (n==0) return new Long[] {};
+        if(n==1) return new Long[] {1l};
+
+        Long[][] uFactors = getUniquePrimeFactorsWithCount(n);
+        Long[] potencies = new Long[uFactors.length];
+        for(int x = 0; x<uFactors.length;x++){
+            potencies[x] = (long)Math.pow(uFactors[0][x],uFactors[1][x]);
+        }
+        return potencies;
+    }
 }
 
 
